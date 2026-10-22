@@ -1,0 +1,6 @@
+id=AnyKeybox_module
+name=AnyKeybox - module
+version=1.0.0
+versionCode=1
+author=RGWS-LiuLai
+description=📦 No CA imported yet — open the WebUI and select a keybox.xml to install certificates.

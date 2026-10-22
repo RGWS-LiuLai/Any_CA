@@ -1,0 +1,34 @@
+simple 8fe4967a
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+mixedcase f7ef3b8c
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+chinese 8e35d4f5
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+multirdn e91e121b
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+email 16b6ef89
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+padded ded3c274
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+symbol 65ad85d5
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+digits 7f59c653
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+longcn fdcda2db
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+spacesmid 49cdc5e0
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+upper cc8113ae
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+utf8force 1a5f5a6c
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+multival d4244878
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+multival2 cd260511
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+utf8mix b278b648
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+stlq 5cbbb41e
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
+leadingws 1bfce320
+  ^-- SubjectPublicKeyInfo:PublicKeyAlgorithm:rsaEncryption
