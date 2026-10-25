@@ -441,6 +441,6 @@ AnyKeybox_module/
 
 ## 许可
 
-**AGPL-3.0** —— 本项目开源，**禁止闭源使用**。详见 [LICENSE](./LICENSE)。
+**GPL-3.0** —— 本项目开源，**禁止闭源使用**。详见 [LICENSE](./LICENSE)。
 
 作者：**RGWS-LiuLai** · 酷安：**恋勿思** · https://github.com/RGWS-LiuLai/Anykeybox_module
