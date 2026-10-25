@@ -18,7 +18,7 @@
 
 - [What this module does](#-what-this-module-does)
 - [Why it matters: the "unknown root" problem](#-why-it-matters-the-unknown-root-problem)
-- [Where it actually helps (and where it doesn't)](#-where-it-actually-helps-and-where-it-doesnt)
+- [Only an "unknown root" needs this module](#-only-an-unknown-root-needs-this-module)
 - [Compatibility: TEE modules](#-compatibility-tee-modules)
 - [What this module canNOT do](#-what-this-module-cannot-do)
 - [How it works](#-how-it-works)
@@ -45,7 +45,7 @@ This module lets you **fill that list with your own certificates**. You pick a `
 
 Put simply:
 
-> **Without this module** — your spoofer signs a certificate chain whose root is a key nobody trusts. The chain is internally valid, but verification fails with *"root certificate is not trusted"* → **unknown root**.
+> **Without this module** — your spoofer signs a chain whose root nobody trusts (typically a self-signed keybox). The chain is internally valid, but verification fails with *"root certificate is not trusted"* → **unknown root**.
 >
 > **With this module** — that same root is now in the device's trusted OEM root list. The chain validates locally, and the attestation status changes from *untrusted* to *"trusted by this device"*.
 
@@ -55,19 +55,15 @@ The module does **not** touch your TEE, your keystore, or any certificate store.
 
 ## Why it matters: the "unknown root" problem
 
-**First, an important clarification, so expectations are accurate:**
+**Bottom line: this module addresses exactly one situation — an "unknown root" — and in practice that almost always means a self-signed keybox.**
 
-In the overwhelming majority of cases — **including most third-party RKP keyboxes and leaked hardware keyboxes** — the chain already validates fine without this module. Android devices generally trust Google's attestation roots (hardware attestation root, RKP root, test roots), so a keybox whose chain terminates at one of those roots is **already trusted by your device**. Swapping keyboxes normally does *not* produce an "unknown root" error.
+**RKP keyboxes do not need it, and it does nothing for them.** Wherever an RKP key comes from (a third party, another device, the internet), its chain terminates at Google's RKP root, and **every Android device already trusts that root by default**. Install this module and the chain verifies; skip it and the chain verifies. **There is no difference whatsoever.**
 
-> **This module is a safety net, not a mandatory companion.**
+**The only case that requires this module is a root certificate that is not trusted — an "unknown root".** In practice that means:
 
-It only becomes necessary in the **minority** of cases where the root genuinely is not trusted by your device:
-
-- **Self-signed / hand-generated keyboxes** — you created the root yourself; no device on earth trusts it.
-- **Keyboxes using a non-standard or private CA chain** — not anchored at any root present in your device's trust store.
-- **Devices or ROM variants that lack the relevant root** — e.g. non-GMS builds, heavily customized ROMs, unusual regional variants, or older/locked-down builds with a trimmed trust store.
-- **A root that was removed or is considered compromised** in your particular build.
-- **Problematic / malformed keyboxes** whose chain does not terminate at a well-formed trusted anchor at all.
+- **Self-signed / generated keyboxes** — the overwhelming majority. You (or a tool) created the root; no device anywhere trusts it, so the chain inevitably reports *unknown root*.
+- A few non-standard / private CA chains.
+- Rare device or ROM variants missing a particular root (non-GMS builds, heavily customized systems with a trimmed trust store, etc.).
 
 In those cases, local attestation verification reports:
 
@@ -89,57 +85,62 @@ This module installs certificates into the system trust store using the standard
 
 ---
 
-## Where it actually helps (and where it doesn't)
+## Only an "unknown root" needs this module
 
-### Baseline reality: most keyboxes just work
+### RKP keyboxes: not applicable, not needed
 
-To set expectations correctly: **most RKP keyboxes — including those obtained from third parties or other devices — and most leaked hardware keyboxes already validate locally without this module.** Android devices commonly trust Google's attestation roots, so chains anchored there are accepted out of the box. If you swap a keybox and everything verifies, **you do not need this module at all**.
+**Plainly: this module is meaningless for RKP keyboxes.**
 
-### When it becomes essential
+An RKP chain terminates at Google's RKP root, which is **already trusted by default** on your device. Therefore:
 
-These are the cases where the root is genuinely untrusted and this module changes the outcome:
+- Without this module → the chain verifies ✅
+- With this module → the chain still verifies ✅ (you merely added an already-trusted root again)
 
-| Case | Why the root is untrusted | Does this module fix it? |
+**The outcome is identical.** RKP keyboxes are not a target scenario for this module.
+
+### The one real scenario: unknown root (mostly self-signed)
+
+The only reason this module exists is to supply a root certificate that **your device does not trust** — the "unknown root" problem.
+
+In practice it almost always comes from a self-signed keybox:
+
+| Case | Is it an "unknown root"? | Does this module fix it? |
 |---|---|---|
-| **Self-signed / generated keybox** | You created the root; no device trusts it | ✅ Yes — this is the clearest use case |
-| **Non-standard / private CA chain** | Chain is not anchored at any root in your trust store | ✅ Yes |
-| **Device/ROM lacking that root** | Non-GMS build, trimmed trust store, custom ROM, unusual regional variant, older locked-down build | ✅ Yes |
-| **Root removed / considered compromised** in your build | Build-specific trust store differences | ✅ Yes |
-| **Malformed or problematic keybox** | Chain does not end at a well-formed trusted anchor | ⚠️ Usually — but the keybox itself may be the real problem |
-| **Ordinary third-party RKP keybox** | Root already trusted | ❌ Not needed — no effect either way |
-| **Genuine Google hardware keybox** | Root already trusted | ❌ Not needed — no effect either way |
+| **Self-signed / tool-generated keybox** | ✅ Yes — **the overwhelming majority** | ✅ Yes |
+| Non-standard / private CA chain | ✅ Yes | ✅ Yes |
+| Device or ROM missing a particular root (non-GMS, trimmed store, heavily customized) | ✅ Yes (rare) | ✅ Yes |
+| **RKP keybox (any source)** | ❌ No — root already trusted | ❌ Not needed |
+| **Genuine Google hardware keybox** | ❌ No — root already trusted | ❌ Not needed |
 
-### Self-signed keyboxes — the clearest use case
+In one sentence: **if you are not seeing an "unknown root" error, you do not need this module; if you are, it is almost certainly because you are using a self-signed keybox.**
+
+### About self-signed keyboxes
 
 A keybox you generated yourself (OpenSSL, a script, or a "fake keybox" tool) has a root certificate that **no device trusts, including your own**.
 
-- Without this module → guaranteed **unknown root**
+- Without this module → guaranteed *unknown root*
 - With this module → the device trusts it locally; local validation passes cleanly
 
-### RKP keyboxes — sometimes, not always
-
-An RKP keybox provisioned for *another* device usually terminates at a Google RKP root that **most** Android devices already trust — in which case nothing is broken and this module is unnecessary.
-
-It becomes relevant when your particular build **does not** carry that root (some non-GMS or heavily customized builds, certain regional/older variants), or when the keybox uses a chain that is not anchored in the standard Google root set. In those minority situations, this module supplies the missing trust anchor.
+This is the module's core purpose.
 
 ---
 
-### ⚠️ Google hardware keyboxes — **not recommended**
+### ⚠️ Google hardware keyboxes — also not needed
 
-If you hold a **genuine, unrevoked Google hardware attestation keybox** (one that produces chains rooted at Google's hardware attestation root):
+If you hold a **genuine, unrevoked Google hardware attestation keybox**:
 
-- **It adds no benefit.** The chain already terminates at a root your device trusts. Adding it to the OEM list changes nothing — it was never an "unknown root" case.
-- **It cannot help with Google verification.** See [below](#-what-this-module-cannot-do).
-- **It adds risk without reward.** Genuine leaked keyboxes are widely queried against Google's revocation lists; a trusted local root does not protect them.
+- **No benefit whatsoever**: the chain already roots at a trusted anchor, so adding it to the OEM list changes nothing — it was never an "unknown root".
+- **It cannot help with Google verification**: see [below](#-what-this-module-cannot-do).
+- **It adds risk without reward**: genuine leaked keyboxes are widely checked against Google's revocation lists; a locally trusted root does not protect them.
 
 **Rule of thumb:**
 
 | Your keybox | Should you install this module? |
 |---|---|
-| Self-signed / generated keybox | ✅ **Yes — clearest use case** |
-| Keybox whose root your device does not trust (non-GMS ROM, trimmed store, private CA) | ✅ **Yes** |
-| Ordinary third-party RKP keybox | ⭕ **Not needed** — works without it |
-| Genuine Google hardware keybox | ❌ **No — no effect, no benefit** |
+| Self-signed / generated keybox | ✅ **Yes — the core use case** |
+| Non-standard / private CA chain (showing unknown-root errors) | ✅ **Yes** |
+| Ordinary RKP keybox (any source) | ❌ **No — no effect at all** |
+| Genuine Google hardware keybox | ❌ **No — no effect at all** |
 
 ---
 
@@ -410,10 +411,10 @@ No. It makes *your device* trust the root locally. Google verifies server-side. 
 No. Your chain already roots at a trusted anchor; this module adds nothing and cannot help with Google-side checks.
 
 **Q: Why do I also need a TEE module?**
-They do different jobs: a TEE module handles the *signing* side (it actually signs with that keybox), while this module handles the *trust* side (making the root trusted by the device). For most keyboxes the root is already trusted and this module is unnecessary; it only helps when the root is genuinely untrusted.
+They do different jobs: a TEE module handles the *signing* side (it actually signs with that keybox), while this module handles the *trust* side (making the root trusted by the device). You only need this module when an *unknown root* occurs.
 
-**Q: Do I need this for an ordinary third-party RKP keybox?**
-Usually **no**. Most devices already trust Google's RKP root, so the chain verifies as-is. It only helps if your build lacks that root (e.g. some non-GMS or heavily customized builds), or if the keybox uses a private CA chain.
+**Q: Do I need this for an RKP keybox?**
+**No — it has no effect at all.** An RKP chain terminates at Google's RKP root, which your device already trusts, so installing it changes nothing. This module exists solely for the *unknown root* case, which in practice almost always means a **self-signed** keybox.
 
 **Q: Will re-picking a file stack up duplicates?**
 No. Each import removes the previously imported CA files first.
