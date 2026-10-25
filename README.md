@@ -440,6 +440,6 @@ This module does not create, forge, or leak any key. It only installs certificat
 
 ## License
 
-**AGPL-3.0** — this project is open source; **closed-source use is forbidden**. See [LICENSE](./LICENSE).
+**GPL-3.0** — this project is open source; **closed-source use is forbidden**. See [LICENSE](./LICENSE).
 
 Author: **RGWS-LiuLai** · Coolapk: **恋勿思** · https://github.com/RGWS-LiuLai/Anykeybox_module
