@@ -5,7 +5,7 @@
 #  Android system trust store (conscrypt APEX preferred).
 #
 #  Author : RGWS-LiuLai  (Coolapk: 恋勿思)
-#  License: AGPL-3.0 (open source, closed source forbidden)
+#  License: GPL-3.0 (open source, closed source forbidden)
 #  GitHub : https://github.com/RGWS-LiuLai/Anykeybox_module
 # ============================================================
 
@@ -14,7 +14,7 @@ ui_print "   AnyKeybox - module  v1.0.0"
 ui_print "   keybox CA → system trust store"
 ui_print "************************************"
 ui_print "   Author : RGWS-LiuLai (恋勿思)"
-ui_print "   License: AGPL-3.0 · 禁止闭源"
+ui_print "   License: GPL-3.0 · 禁止闭源"
 ui_print "************************************"
 
 # ---------- permissions ----------
