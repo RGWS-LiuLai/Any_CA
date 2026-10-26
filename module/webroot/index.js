@@ -3,7 +3,7 @@
  * Bilingual (auto + manual), auto dark/light theme, file picking,
  * certificate extraction, <hash>.<n> naming, state detection.
  *
- * AGPL-3.0 © RGWS-LiuLai. Open source — closed source use is forbidden.
+ * GPL-3.0 © RGWS-LiuLai. Open source — closed source use is forbidden.
  */
 'use strict';
 

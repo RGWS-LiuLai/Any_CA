@@ -14,7 +14,7 @@
  *   subject hash: n starts at 0 and increments on collision.
  *
  * Part of AnyKeybox - module (https://github.com/RGWS-LiuLai/Anykeybox_module)
- * AGPL-3.0 © RGWS-LiuLai. Open source — closed source use is forbidden.
+ * GPL-3.0 © RGWS-LiuLai. Open source — closed source use is forbidden.
  */
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) module.exports = factory();
