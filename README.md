@@ -1,6 +1,6 @@
 # AnyKeybox - module
 
-> **Import CA certificates from any `keybox.xml` into the Android system trust store — with a beautiful, bilingual KernelSU / APatch WebUI.**
+> **Import CA certificates from any `keybox.xml` into the Android system trust store — with a beautiful, bilingual KernelSU / KsuWebUI / APatch WebUI.**
 
 **English** | [简体中文](./README_ZH.md)
 
