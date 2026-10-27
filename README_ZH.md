@@ -1,6 +1,6 @@
 # AnyKeybox - module
 
-> **将任意 `keybox.xml` 中的 CA 证书导入 Android 系统信任库 —— 配备精美、双语的 KernelSU / Magisk / APatch WebUI。**
+> **将任意 `keybox.xml` 中的 CA 证书导入 Android 系统信任库 —— 配备精美、双语的 KernelSU / APatch WebUI。**
 
 [English](./README.md) | **简体中文**
 
