@@ -142,23 +142,6 @@
    * the list the user sees.
    */
 
-  
-
-  /**
-   * Install the ROOT certificate of a keybox chain into the mounted
-   * trust store, so the device trusts the anchor that signs the chain.
-   * The module stages it under apex/…/cacerts and the root manager
-   * mounts it — exactly the same mechanism the CA import uses.
-   *
-   * @param {string} text      keybox XML
-   * @param {string} itemId    item id used to record the hash
-   * @returns {Promise<{hash:string,name:string}|null>}
-   */
-
-  
-
-  
-
   /* ================= language ================= */
 
   function openLanguage() {
