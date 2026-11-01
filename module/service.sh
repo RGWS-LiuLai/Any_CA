@@ -30,7 +30,7 @@ case "$COLOR" in
     yellow) DESC="⚠️ Partially active ($EFF/$TOTAL) — some items are not mounted yet." ;;
     *)
         if [ "$TOTAL" -eq 0 ]; then
-            DESC="📦 No certificates yet — open the WebUI to import a CA or generate a keybox."
+            DESC="📦 No certificates yet — open the WebUI to import a CA certificate."
         else
             DESC="❌ Nothing active (0/$TOTAL) — enable an item or reboot the device."
         fi
