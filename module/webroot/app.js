@@ -239,14 +239,12 @@
       else if (it.effective) { badge = 'ok'; cls = t('b_active'); }
       else { badge = 'wait'; cls = t('b_pending'); }
 
-      var typeLabel = it.type === 'ca' ? t('type_ca')
-                    : it.type === 'ukb' ? t('type_ukb')
-                    : t('type_keybox');
+      var typeLabel = t('type_ca');
 
       return '' +
         '<div class="item' + (it.enabled ? '' : ' disabled') + '" data-type="' + esc(it.type) + '" data-id="' + esc(it.id) + '">' +
           '<div class="item-main">' +
-            '<div class="item-icon">' + (it.type === 'ca' ? ICON_CA : ICON_KB) + '</div>' +
+            '<div class="item-icon">' + ICON_CA + '</div>' +
             '<div class="item-info">' +
               '<div class="item-title">' + esc(it.title || it.id) + '</div>' +
               '<div class="item-meta">' +
