@@ -1,0 +1,28 @@
+# build output
+release/
+*.zip
+
+# python
+__pycache__/
+*.py[cod]
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# runtime artifacts that must never be committed
+module/.cacerts_root/
+module/.overlay_root/
+module/mount.log
+module/overlay_mount.log
+module/data/
+module/apex/
+
+# anything holding user certificates
+*.pem
+*.key
+*.jks
+*.keystore
+!licenses/*.txt
