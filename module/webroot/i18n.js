@@ -54,14 +54,12 @@
     importCa: 'Trust a CA certificate',
     importCaSub: 'Pick a PEM/DER certificate and add it to the system store',
     certList: 'Certificates', emptyList: 'Nothing here yet',
-    b_active: 'Active', b_pending: 'Pending', b_disabled: 'Disabled',
-    type_keybox: 'Generated', type_ca: 'CA',
+    b_active: 'Active', b_pending: 'Pending', b_disabled: 'Disabled', type_ca: 'CA',
     a_disable: 'Disable', a_enable: 'Enable', a_pin: 'Pin', a_unpin: 'Unpin',
     a_delete: 'Delete', a_export: 'Export',
     confirm: 'Confirm', cancel: 'Cancel', ok: 'OK', close: 'Close',
     delete_title: 'Delete this item?',
     delete_msg: 'The item and its installed certificate will be removed.',
-    export_title: 'Export keybox', exporting: 'Exporting…', export_done: 'Exported',
     busy_reading: 'Reading file…', busy_parsing: 'Parsing certificates…',
     busy_writing: 'Writing files…', busy_generating: 'Generating keys…', busy_installing: 'Installing…',
     err_read: 'Could not read the file', err_nocert: 'No certificate found in this file',
@@ -78,7 +76,7 @@
     ca_import_sub: 'It will be trusted after the module is mounted.',
     reboot_needed: 'A reboot may be required for the certificate to take effect.',
     first_run_title: 'Before you start',
-    first_run_body: 'This module modifies the system trust store and interacts with TEE spoofing modules. Back up your data first and use it only on devices you own. Generated keyboxes are for entertainment only and cannot pass Google certification.',
+    first_run_body: 'This module modifies the system trust store. Back up your data first and use it only on devices you own.',
     got_it: 'Got it'
   };
 
