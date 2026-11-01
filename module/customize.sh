@@ -9,7 +9,8 @@
 
 ui_print "************************************"
 ui_print "   Any - CA  v1.0.0"
-ui_print "   CA trust store · keybox · TEE"
+ui_print "   Import CA certificates"
+ui_print "   into the system trust store"
 ui_print "************************************"
 ui_print "   Author : RGWS-LiuLai (恋勿思)"
 ui_print "   License: GPL-3.0 · 禁止闭源"
@@ -31,9 +32,11 @@ fi
 ui_print "- 设置权限 / Setting permissions ..."
 [ -d "$MODPATH/scripts" ] && set_perm_recursive "$MODPATH/scripts" 0 0 0755 0755
 [ -d "$MODPATH/webroot" ] && set_perm_recursive "$MODPATH/webroot" 0 0 0755 0644
-set_perm "$MODPATH/service.sh"   0 0 0755
-set_perm "$MODPATH/uninstall.sh" 0 0 0755
+set_perm "$MODPATH/post-fs-data.sh" 0 0 0755
+set_perm "$MODPATH/service.sh"      0 0 0755
+set_perm "$MODPATH/uninstall.sh"    0 0 0755
 [ -f "$MODPATH/module.prop" ] && set_perm "$MODPATH/module.prop" 0 0 0644
+[ -f "$MODPATH/skip_mount" ] && set_perm "$MODPATH/skip_mount" 0 0 0644
 
 # ---------- restore data ----------
 mkdir -p "$MODPATH/data" 2>/dev/null
@@ -46,12 +49,13 @@ set_perm_recursive "$MODPATH/data" 0 0 0755 0644
 
 # ---------- notes ----------
 ui_print "- 说明 / Notes:"
-ui_print "  · 打开模块 WebUI 导入 CA 或生成 keybox"
-ui_print "    Open the WebUI to import a CA or a keybox"
+ui_print "  · 打开模块 WebUI 导入 CA 证书"
+ui_print "    Open the WebUI to import a CA certificate"
 ui_print "  · 安装后需在管理器启用本模块并重启"
 ui_print "    Enable the module in your manager, then reboot"
-ui_print "  · 生成的 keybox 仅供娱乐，无法通过 Google 认证"
-ui_print "    Generated keyboxes are entertainment only"
+ui_print "  · 重启后本模块会把证书挂载进系统信任库"
+ui_print "    After reboot the module mounts the certs into"
+ui_print "    the system trust store"
 
 ui_print "- 安装完成 / Installed!"
 ui_print "************************************"
