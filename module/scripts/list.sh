@@ -1,17 +1,11 @@
 #!/system/bin/sh
 # ============================================================
 #  Any - CA  ::  scripts/list.sh
-#  Manage the certificate / keybox item list.
+#  Manage the CA certificate item list.
 #
 #  Each item lives in $ITEMS/<id>/ with:
-#     meta.conf    type, title, enabled, pinned, created,
-#                  source, hash (for CA), keybox info
-#     payload      the original file (xml / pem / der converted)
-#
-#  Item types:
-#     keybox   - generated self-signed keybox  (module-owned)
-#     ukb      - user supplied keybox.xml
-#     ca       - plain CA certificate (pem / der)
+#     meta.conf    type=ca, title, enabled, pinned, created, hash
+#     payload.pem  the certificate
 #
 #  Copyright (C) 2026 RGWS-LiuLai (Coolapk: 恋勿思) · GPL-3.0
 # ============================================================
@@ -46,7 +40,7 @@ item_set() {
 }
 
 # ------------------------------------------------------------
-#  new_id <type> — timestamp + random suffix
+#  new_id — timestamp + random suffix
 # ------------------------------------------------------------
 new_id() {
     _ts="$(date +%Y%m%d%H%M%S)"
@@ -56,23 +50,8 @@ new_id() {
 }
 
 # ------------------------------------------------------------
-#  default_order — sort key per spec:
-#    1. keybox items (module-generated) and user keyboxes
-#    2. plain CA certificates
-#    pinned items float above all of that
-# ------------------------------------------------------------
-type_rank() {
-    case "$1" in
-        keybox) echo 0 ;;
-        ukb)    echo 1 ;;
-        ca)     echo 2 ;;
-        *)      echo 9 ;;
-    esac
-}
-
-# ------------------------------------------------------------
 #  list_items — tab-separated rows for the WebUI
-#    id \t type \t title \t enabled \t pinned \t created \t extra
+#    pinned \t created \t id \t type \t title \t enabled \t extra
 # ------------------------------------------------------------
 list_items() {
     [ -d "$ITEMS" ] || return 0
@@ -87,11 +66,9 @@ list_items() {
         _pin="$(item_field "$_id" pinned)"; [ -z "$_pin" ] && _pin=0
         _cr="$(item_field "$_id" created)"
         _extra="$(item_field "$_id" extra)"
-        _rank="$(type_rank "$_type")"
-        # sort key: pinned first, then type rank, then newest first
-        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-            "$_pin" "$_rank" "$_cr" "$_id" "$_type" "$_title" "$_en" "$_extra"
-    done | sort -t"$(printf '\t')" -k1,1r -k2,2n -k3,3r
+        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+            "$_pin" "$_cr" "$_id" "$_type" "$_title" "$_en" "$_extra"
+    done | sort -t"$(printf '\t')" -k1,1r -k2,2r
 }
 
 # ------------------------------------------------------------
@@ -121,18 +98,13 @@ pin_item() {
 delete_item() {
     _id="$1"
     [ -d "$ITEMS/$_id" ] || return 1
-    _type="$(item_field "$_id" type)"
     _hash="$(item_field "$_id" hash)"
-    case "$_type" in
-        ca)
-            if [ -n "$_hash" ]; then
-                _dest="$(sh "$_dir/trust.sh" moddir 2>/dev/null)"
-                if [ -n "$_dest" ]; then
-                    rm -f "$_dest/$_hash".* 2>/dev/null
-                fi
-            fi
-            ;;
-    esac
+    if [ -n "$_hash" ]; then
+        _dest="$(sh "$_dir/trust.sh" moddir 2>/dev/null)"
+        if [ -n "$_dest" ]; then
+            rm -f "$_dest/$_hash".* 2>/dev/null
+        fi
+    fi
     rm -rf "$ITEMS/$_id"
     log INFO "deleted item $_id"
     return 0
@@ -140,8 +112,7 @@ delete_item() {
 
 # ------------------------------------------------------------
 #  item_effective <id> — does this item actually take effect?
-#    ca    : staged file exists AND is visible in the real store
-#    keybox: the keybox is distributed to at least one TEE module
+#    the staged file must exist AND be visible in the real store
 # ------------------------------------------------------------
 item_effective() {
     _id="$1"
@@ -150,30 +121,18 @@ item_effective() {
     _en="$(item_field "$_id" enabled)"; [ -z "$_en" ] && _en=1
     [ "$_en" = "1" ] || { echo 0; return; }
 
-    _type="$(item_field "$_id" type)"
-    case "$_type" in
-        ca)
-            _hash="$(item_field "$_id" hash)"
-            [ -n "$_hash" ] || { echo 0; return; }
-            _dest="$(sh "$_dir/trust.sh" moddir 2>/dev/null)"
-            _sys="$(sh "$_dir/trust.sh" dir 2>/dev/null)"
-            [ -n "$_dest" ] && [ -n "$_sys" ] || { echo 0; return; }
-            # any staged <hash>.<n> that is also present in the system store
-            for f in "$_dest/$_hash".*; do
-                [ -f "$f" ] || continue
-                _n="$(basename "$f")"
-                [ -f "$_sys/$_n" ] && { echo 1; return; }
-            done
-            echo 0
-            ;;
-        keybox|ukb)
-            _tgt="$(item_field "$_id" teetargets)"
-            [ -n "$_tgt" ] && echo 1 || echo 0
-            ;;
-        *)
-            echo 0
-            ;;
-    esac
+    _hash="$(item_field "$_id" hash)"
+    [ -n "$_hash" ] || { echo 0; return; }
+    _dest="$(sh "$_dir/trust.sh" moddir 2>/dev/null)"
+    _sys="$(sh "$_dir/trust.sh" dir 2>/dev/null)"
+    [ -n "$_dest" ] && [ -n "$_sys" ] || { echo 0; return; }
+
+    for f in "$_dest/$_hash".*; do
+        [ -f "$f" ] || continue
+        _n="$(basename "$f")"
+        [ -f "$_sys/$_n" ] && { echo 1; return; }
+    done
+    echo 0
 }
 
 # ------------------------------------------------------------
@@ -210,7 +169,7 @@ case "$1" in
     counts)   counts ;;
     newid)    new_id "$2" ;;
     *)
-        echo "usage: list.sh {list|field|set|toggle|pin|unpin|delete|counts|newid}" >&2
+        echo "usage: list.sh {list|field|set|toggle|pin|unpin|delete|effective|counts|newid}" >&2
         exit 64
         ;;
 esac
