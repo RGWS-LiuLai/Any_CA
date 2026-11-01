@@ -135,8 +135,6 @@ html, body {
   background: var(--accent-soft); color: var(--accent-text);
 }
 .item-icon svg { width: 19px; height: 19px; }
-.item[data-type="keybox"] .item-icon,
-.item[data-type="ukb"]    .item-icon { background: var(--yellow-soft); color: var(--yellow); }
 
 .item-info { flex: 1; min-width: 0; }
 .item-title {
