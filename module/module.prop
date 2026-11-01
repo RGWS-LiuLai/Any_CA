@@ -3,5 +3,5 @@ name=Any - CA
 version=1.0.0
 versionCode=1
 author=RGWS-LiuLai
-description=📦 No certificates yet — open the WebUI to import a CA certificate or a keybox.xml.
+description=📦 No certificates yet — open the WebUI to import a CA certificate.
 updateJson=https://raw.githubusercontent.com/RGWS-LiuLai/Any_CA/main/update.json
