@@ -18,7 +18,7 @@ OUT="$ROOT/release"
 [ -f "$SRC/module.prop" ] || { echo "error: module/module.prop missing"; exit 1; }
 
 VERSION="$(sed -n 's/^version=//p' "$SRC/module.prop" | head -1 | tr -d '\r')"
-[ -n "$VERSION" ] || VERSION="2.0.0"
+[ -n "$VERSION" ] || VERSION="1.0.0"
 ZIP="$OUT/Any_CA-v$VERSION.zip"
 
 # keep the generation engine in sync with its canonical copy

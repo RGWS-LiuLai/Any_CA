@@ -6,11 +6,12 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Root-3ddc84.svg)]()
-[![Version](https://img.shields.io/badge/version-2.0.0-63d6a5.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-63d6a5.svg)]()
 
 **Author**: RGWS-LiuLai · [GitHub](https://github.com/RGWS-LiuLai) · [Coolapk 恋勿思](https://www.coolapk.com/u/28676823)
 **Project**: https://github.com/RGWS-LiuLai/Any_CA
-**Package**: `Any_CA` · **Version**: 2.0.0 (versionCode 2)
+**Predecessor**: https://github.com/RGWS-LiuLai/AnyKeybox_module (same project, earlier name)
+**Package**: `Any_CA` · **Version**: 1.0.0 (versionCode 1)
 
 ---
 
@@ -54,7 +55,7 @@ Verified against **149 / 149** certificates in a live device's
 
 ---
 
-## What this module removed in 2.0.0
+## What this module removed
 
 ### Keybox generation — removed
 
@@ -144,7 +145,7 @@ Two failure modes are explicitly guarded against, both learned the hard way:
 
 ## Installation
 
-1. Flash `Any_CA-v2.0.0.zip` in KernelSU / Magisk / APatch.
+1. Flash `Any_CA-v1.0.0.zip` in KernelSU / Magisk / APatch.
 2. Open the module **WebUI**.
 3. Import a CA certificate.
 4. Enable the module and **reboot** — needed so the bind mount reaches every
@@ -211,7 +212,7 @@ See [LICENSE](./LICENSE) and [NOTICE.md](./NOTICE.md).
   independent CSS interpretation.
 - **AOSPGenKeyBox** (GPL-3.0) — reference for the Android Keystore
   `KeyDescription` ASN.1 layout during development of the keybox generation
-  feature. **No code is shipped**, and that feature was removed in 2.0.0.
+  feature. **No code is shipped**, and that feature was removed in 1.0.0.
 
 ---
 

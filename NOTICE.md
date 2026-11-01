@@ -5,8 +5,9 @@ Copyright (C) 2026 RGWS-LiuLai (Coolapk: 恋勿思)
 Licensed under the **GNU General Public License v3.0** (see `LICENSE`).
 
 This project is developed and owned in full by its author. It is the same
-project previously published as *AnyKeybox - module*; that name has been retired
-and replaced by **Any - CA**. It is **not** a derivative of a third party, and no
+project previously published as *AnyKeybox - module* at
+https://github.com/RGWS-LiuLai/AnyKeybox_module — that name has been retired and
+replaced by **Any - CA**. It is **not** a derivative of a third party, and no
 third-party project is thanked for anything the author wrote.
 
 ---

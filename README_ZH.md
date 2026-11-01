@@ -6,11 +6,12 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Root-3ddc84.svg)]()
-[![Version](https://img.shields.io/badge/version-2.0.0-63d6a5.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-63d6a5.svg)]()
 
 **作者**：RGWS-LiuLai · [GitHub](https://github.com/RGWS-LiuLai) · [酷安 恋勿思](https://www.coolapk.com/u/28676823)
 **项目地址**：https://github.com/RGWS-LiuLai/Any_CA
-**包名**：`Any_CA` · **版本**：2.0.0 (versionCode 2)
+**前身项目**：https://github.com/RGWS-LiuLai/AnyKeybox_module （同一项目，旧名称）
+**包名**：`Any_CA` · **版本**：1.0.0 (versionCode 1)
 
 ---
 
@@ -51,7 +52,7 @@ name = MD5(Subject 原始 DER) 前 4 字节，小端序  →  <hash>.<n>
 
 ---
 
-## 2.0.0 移除了什么
+## 移除了什么
 
 ### keybox 生成 —— 已移除
 
@@ -132,7 +133,7 @@ bind mount 会合并原有证书与暂存证书，不丢失任何文件。
 
 ## 安装
 
-1. 在 KernelSU / Magisk / APatch 中刷入 `Any_CA-v2.0.0.zip`。
+1. 在 KernelSU / Magisk / APatch 中刷入 `Any_CA-v1.0.0.zip`。
 2. 打开模块 **WebUI**。
 3. 导入 CA 证书。
 4. 启用模块并**重启**——需要重启才能让 bind mount 对所有进程生效，
@@ -196,7 +197,7 @@ Any-CA/
   因此**未使用任何源代码**；界面是基于该设计语言的独立 CSS 实现。
 - **AOSPGenKeyBox**（GPL-3.0）—— 开发 keybox 生成功能时，参考了 Android
   Keystore `KeyDescription` 的 ASN.1 结构。**未包含任何代码**，
-  该功能已在 2.0.0 移除。
+  该功能已在 1.0.0 移除。
 
 ---
 

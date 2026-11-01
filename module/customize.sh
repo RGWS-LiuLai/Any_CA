@@ -1,6 +1,6 @@
 #!/system/bin/sh
 # ============================================================
-#  Any - CA  v2.0.0  ::  customize.sh
+#  Any - CA  v1.0.0  ::  customize.sh
 #  Installer. Preserves user data across module updates.
 #
 #  Copyright (C) 2026 RGWS-LiuLai (Coolapk: 恋勿思) · GPL-3.0
@@ -8,7 +8,7 @@
 # ============================================================
 
 ui_print "************************************"
-ui_print "   Any - CA  v2.0.0"
+ui_print "   Any - CA  v1.0.0"
 ui_print "   CA trust store · keybox · TEE"
 ui_print "************************************"
 ui_print "   Author : RGWS-LiuLai (恋勿思)"

@@ -1,83 +1,88 @@
 # Changelog
 
-## 2.0.0 (versionCode 2)
+## 1.0.0 (versionCode 1)
 
-This is a major update of the same project, renamed from **AnyKeybox - module**
-to **Any - CA**. The old repository name has been retired.
+First release of **Any - CA**.
+
+This project is the successor of
+[AnyKeybox_module](https://github.com/RGWS-LiuLai/AnyKeybox_module) — same
+project, earlier name. Its feature set was rebuilt from scratch around a single
+goal that actually works.
+
+### What it does
+
+Import CA certificates into the Android **system trust store**. Pick a
+PEM / DER / X.509 file in the WebUI — a single certificate or a whole bundle —
+and every certificate it contains is installed, so all apps trust them for TLS.
 
 ### Added
 
 - **Bilingual WebUI** (74 languages, auto-detected with persisted manual
   override) inspired by the miuix design language — an independent CSS
   implementation, not a copy of miuix source.
-- **Automatic TEE module detection** with precise `module.prop` matching:
-  - Oh My Keymint → `/data/misc/keystore/omk/keybox.xml`
-  - Tricky Store / Tricky Store OSS / TEESimulator ≤3.2 / TEESimulator-RS →
-    `/data/adb/tricky_store/keybox.xml`
-  - TEESimulator ≥4.0 → `/data/adb/teesim/keybox.xml`
-- **Multi-certificate CA import** — one file may contain many PEM blocks; each
-  becomes its own list item with automatic de-duplication.
-- **Keybox backup and restore** — every overwrite backs up the previous file;
-  `uninstall.sh` restores it.
-- **Global device-spoofing detection** — reads `common/system.prop` overrides of
-  `ro.product.brand/manufacturer/model`. Per-app Zygisk spoofing is ignored.
-- **Item list** — enable/disable, delete (confirmed), pin.
-- **Status card** — green/yellow/red with live total and active counters.
-- **Data preserved across module updates**.
+- **Multi-certificate import** — one file may hold many PEM blocks; duplicates
+  are skipped and each certificate becomes its own list item.
+- **Live verification** — the status card reports per-certificate checks and
+  shows green / yellow / red with total and active counts. "Active" means the
+  staged `<hash>.<n>` really appears in the running system store.
+- **Correct Android naming** — `MD5(Subject DER)` first 4 bytes, little-endian,
+  written as `<hash>.<n>`. Verified against **149 / 149** certificates in a live
+  device's `/apex/com.android.conscrypt/cacerts/`.
+- **Item list** — enable/disable, delete (confirmed), pin to top.
+- **Data preserved across module updates** — `customize.sh` stages and restores
+  `data/`.
 
-### Changed
+### Mounting
 
-- **The module now performs its own mounting** in `post-fs-data.sh` and ships
-  `skip_mount`. Meta-modules based on VFS path redirection (NoMount and similar)
-  are invisible to `readdir`, and the CA store is read by directory enumeration,
-  so a real bind mount is required.
-- Certificate type detection is structural, not name-based.
+The module performs its own mounting in `post-fs-data.sh` and ships
+`skip_mount`.
 
-### Removed — keybox generation
+Meta-modules built on **VFS path redirection** (NoMount and similar) are
+invisible to directory enumeration. The CA store is read with `readdir`, so
+those redirects never work for it — a real bind mount is required.
 
-The generation engine (ASN.1 encoder, X.509 builder, `KeyDescription`, subject
-templates, keybox assembler — about 1,600 lines of JavaScript) was deleted.
-A self-signed keybox cannot pass any Google certification, so generating one has
-no practical value.
+Two failure modes are explicitly guarded against:
 
-### Removed — OEM attestation overlay (failed approach)
+- `post-fs-data.sh` never deletes a directory that is currently bind-mounted —
+  doing so yields a `/deleted` mount and an empty tree, which breaks every app
+  that depends on the affected system directory.
+- Staging verifies each written file is non-empty; writing in place over a live
+  bind mount can silently produce a 0-byte file.
 
-A static RRO overriding `array/vendor_required_attestation_certificates` was
-implemented and tested. **It does not work on modern Android:**
+### Not included
 
-- `framework-res.apk` ships **no `overlayable.xml`**, so third-party overlays may
-  not override framework resources.
-- OverlayManagerService only accepts overlays signed like the target, or
-  pre-installed ones baked into the system image.
-- Even with the file bind-mounted before boot and `PackageManager` successfully
-  parsing it, registration is refused:
-  `the overlay lacks <overlay android:targetName>` — and there is no
-  `targetName` value to supply, because the target declares no overlayable group.
+**Keybox generation.** A self-signed keybox cannot pass any Google
+certification, so generating one has no practical value. The generation engine
+from the predecessor project (ASN.1 encoder, X.509 builder, `KeyDescription`,
+subject templates, keybox assembler) was not carried over.
 
-Verified on a live Android 16 / ColorOS device. The removed pieces were:
-`gen/overlay.js`, `gen/apksign.js`, `scripts/overlay.sh`, plus the related UI.
+**Keybox distribution to TEE modules.** Installing a `keybox.xml` into
+Oh My Keymint / Tricky Store / TEESimulator worked technically, but it only
+matters for attestation spoofing, which this module does not cover. Keeping it
+would have implied the module helps pass attestation, which it does not.
 
-### Fixed
+**OEM attestation RRO overlay.** The goal was to make KeyAttestation report
+*"trusted by this device"* by overriding the framework array
+`array/vendor_required_attestation_certificates` with a static RRO.
 
-- `post-fs-data.sh` no longer deletes a directory that is currently
-  bind-mounted; doing so produced a `/deleted` mount and an empty tree.
-- CA staging now verifies the written file is non-empty, catching the case where
-  an in-place write over a live bind mount silently produced a 0-byte file.
-- Stale TEE directories (left over from uninstalled modules) are no longer
-  reported as installed modules.
+**This cannot work on modern Android**, verified on Android 16 / ColorOS:
+
+- `framework-res.apk` ships **no `overlayable.xml`**, so no third-party overlay
+  is permitted to override framework resources.
+- OverlayManagerService accepts only overlays signed like the target, or ones
+  pre-installed in the system image.
+- Even when the APK was bind-mounted into `/product/overlay` **before**
+  `PackageManager` scanned it — and `PackageManager` did parse it successfully —
+  registration was refused:
+  `the overlay lacks <overlay android:targetName>`.
+  There is no value to supply, because the target package declares no
+  overlayable group.
 
 ### Verified
 
-- The Android CA naming hash was validated against **149 / 149** certificates in
-  a live device's `/apex/com.android.conscrypt/cacerts/`.
+- The Android CA naming hash matched **149 / 149** certificates in a live
+  device's system CA store.
 - A staged CA appears in the live store with a matching `<hash>.<n>` name and is
   visible to newly started Zygote processes.
-
----
-
-## 1.0.0 (versionCode 1) — as *AnyKeybox - module*
-
-- Import CA certificates from any `keybox.xml` into the system trust store.
-- APEX-preferred trust store targeting with legacy fallback.
-- Five-step mount verification and reboot detection.
-- Bilingual (English / Chinese) UI with dark and light themes.
+- Multi-certificate import: a 4-certificate bundle imported as 4 separate items,
+  with duplicates correctly skipped.
